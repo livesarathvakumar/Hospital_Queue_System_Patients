@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_patient/model/user_model.dart';
+import 'package:doctor_patient/screen/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,11 @@ class HomeScreen extends StatefulWidget {
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
+}
+
+enum MenuItem {
+  item1,
+  item2,
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -35,6 +41,22 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text("Home"),
         centerTitle: true,
+        actions: [
+          PopupMenuButton<MenuItem>(
+            onSelected: (value) {
+              if (value == MenuItem.item1) {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => ItemPage()));
+              } else if (value == MenuItem.item2) {
+                //clicked "item 2"
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: MenuItem.item1, child: Text('Item 1')),
+              PopupMenuItem(value: MenuItem.item2, child: Text('Item 2'))
+            ],
+          )
+        ],
       ),
       body: Center(
         child: Padding(
