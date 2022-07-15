@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 
 import 'login_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class PatientsHomeScreen extends StatefulWidget {
+  const PatientsHomeScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _PatientsHomeScreenState createState() => _PatientsHomeScreenState();
 }
 
 enum MenuItem {
@@ -18,7 +18,7 @@ enum MenuItem {
   item2,
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
 
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text("Patient Home"),
         centerTitle: true,
         actions: [
           PopupMenuButton<MenuItem>(
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Image.asset("assets/logo.png", fit: BoxFit.contain),
               ),
               Text(
-                "Welcome Back",
+                "Welcome Patient",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               SizedBox(

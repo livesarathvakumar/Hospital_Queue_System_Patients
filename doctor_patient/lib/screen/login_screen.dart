@@ -1,5 +1,5 @@
 import 'package:doctor_patient/screen/signup_screen.dart';
-import 'package:doctor_patient/screen/home_screen.dart';
+import 'package:doctor_patient/screen/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -168,12 +168,12 @@ class _LoginScreenState extends State<LoginScreen> {
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful"),
                   Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => HomeScreen())),
+                      MaterialPageRoute(builder: (context) => SplashScreen())),
                 });
       } on FirebaseAuthException catch (error) {
         print(error.message);
         switch (error.code) {
-          case "invalid-email": 
+          case "invalid-email":
             errorMessage = "Your email address appears to be malformed.";
 
             break;

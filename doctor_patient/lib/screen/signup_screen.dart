@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_patient/model/user_model.dart';
-import 'package:doctor_patient/screen/home_screen.dart';
+import 'package:doctor_patient/screen/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -242,7 +242,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             .createUserWithEmailAndPassword(email: email, password: password)
             .then((value) => {postDetailsToFirestore()})
             .catchError((e) {
-              print(e);
+          print(e);
           Fluttertoast.showToast(msg: e!.message);
         });
       } on FirebaseAuthException catch (error) {
@@ -290,6 +290,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.uid = user.uid;
     userModel.firstName = firstNameEditingController.text;
     userModel.secondName = secondNameEditingController.text;
+    userModel.role = 'patient';
 
     await firebaseFirestore
         .collection("users")
@@ -299,7 +300,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => SplashScreen()),
         (route) => false);
   }
 }

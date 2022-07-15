@@ -1,5 +1,5 @@
-import 'package:doctor_patient/screen/home_screen.dart';
 import 'package:doctor_patient/screen/login_screen.dart';
+import 'package:doctor_patient/screen/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +37,7 @@ class MainPage extends StatelessWidget {
             } else if (snapshot.hasError) {
               return Center(child: Text('Something went wrong!'));
             } else if (snapshot.hasData) {
-              return HomeScreen();
+              return SplashScreen();
             } else {
               return LoginScreen();
             }
