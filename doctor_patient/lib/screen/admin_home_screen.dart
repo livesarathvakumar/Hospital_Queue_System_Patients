@@ -3,6 +3,9 @@ import 'package:doctor_patient/model/user_model.dart';
 import 'package:doctor_patient/screen/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:doctor_patient/screen/patients_list_screen.dart';
+import 'package:doctor_patient/screen/departments_list_screen.dart';
+import 'package:doctor_patient/screen/doctors_list_screen.dart';
 
 import 'login_screen.dart';
 
@@ -14,8 +17,8 @@ class AdminHomeScreen extends StatefulWidget {
 }
 
 enum MenuItem {
-  item1,
-  item2,
+  profilepage,
+  logout,
 }
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
@@ -23,37 +26,91 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   UserModel loggedInUser = UserModel();
 
   @override
-  void initState() {
-    super.initState();
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      this.loggedInUser = UserModel.fromMap(value.data());
-      setState(() {});
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final departmentBtn = Material(
+      elevation: 5,
+      borderRadius: BorderRadius.circular(5),
+      color: Colors.redAccent,
+      child: MaterialButton(
+          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          minWidth: MediaQuery.of(context).size.width,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const DepartmentListScreen()),
+            );
+          },
+          child: Text(
+            "Departments",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          )),
+    );
+
+    final doctorsListBtn = Material(
+      elevation: 5,
+      borderRadius: BorderRadius.circular(5),
+      color: Colors.redAccent,
+      child: MaterialButton(
+          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          minWidth: MediaQuery.of(context).size.width,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const DoctorsListScreen()),
+            );
+          },
+          child: Text(
+            "Doctors",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          )),
+    );
+
+    final patientsListBtn = Material(
+      elevation: 5,
+      borderRadius: BorderRadius.circular(5),
+      color: Colors.redAccent,
+      child: MaterialButton(
+          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          minWidth: MediaQuery.of(context).size.width,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PatientsListScreen()),
+            );
+          },
+          child: Text(
+            "Patients",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          )),
+    );
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Doctor Patient Admin"),
+        title: const Text("Admin Dashboard"),
         centerTitle: true,
         actions: [
           PopupMenuButton<MenuItem>(
             onSelected: (value) {
-              if (value == MenuItem.item1) {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => ItemPage()));
-              } else if (value == MenuItem.item2) {
-                //clicked "item 2"
+              if (value == MenuItem.profilepage) {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => UserProfile()));
+              } else if (value == MenuItem.logout) {
+                logout(context);
               }
             },
             itemBuilder: (context) => const [
-              PopupMenuItem(value: MenuItem.item1, child: Text('Item 1')),
-              PopupMenuItem(value: MenuItem.item2, child: Text('Item 2'))
+              PopupMenuItem(
+                  value: MenuItem.profilepage, child: Text('Profile')),
+              PopupMenuItem(value: MenuItem.logout, child: Text('Logout'))
             ],
           )
         ],
@@ -62,38 +119,19 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                height: 150,
-                child: Image.asset("assets/logo.png", fit: BoxFit.contain),
-              ),
-              Text(
-                "Welcome Admin",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("${loggedInUser.firstName} ${loggedInUser.secondName}",
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  )),
-              Text("${loggedInUser.email}",
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  )),
+              departmentBtn,
               SizedBox(
                 height: 15,
               ),
-              ActionChip(
-                  label: Text("Logout"),
-                  onPressed: () {
-                    logout(context);
-                  }),
+              doctorsListBtn,
+              SizedBox(
+                height: 15,
+              ),
+              patientsListBtn,
+              SizedBox(
+                height: 15,
+              ),
             ],
           ),
         ),
