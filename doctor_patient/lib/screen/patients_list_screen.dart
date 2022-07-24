@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_patient/model/user_model.dart';
 import 'package:doctor_patient/screen/profile_screen.dart';
+import 'package:doctor_patient/screen/admin_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,7 @@ class PatientsListScreen extends StatefulWidget {
 enum MenuItem {
   profilepage,
   logout,
+  dashboard,
 }
 
 class _PatientsListScreenState extends State<PatientsListScreen> {
@@ -53,12 +55,17 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
                       MaterialPageRoute(builder: (context) => UserProfile()));
                 } else if (value == MenuItem.logout) {
                   logout(context);
+                } else if (value == MenuItem.dashboard) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AdminHomeScreen()));
                 }
               },
               itemBuilder: (context) => const [
                 PopupMenuItem(
                     value: MenuItem.profilepage, child: Text('Profile')),
-                PopupMenuItem(value: MenuItem.logout, child: Text('Logout'))
+                PopupMenuItem(value: MenuItem.logout, child: Text('Logout')),
+                PopupMenuItem(
+                    value: MenuItem.dashboard, child: Text('Dashboard'))
               ],
             )
           ],
@@ -81,7 +88,12 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
                             child: Row(
                               children: [
                                 IconButton(
-                                    onPressed: () => UserProfile(),
+                                    onPressed: () {
+                                      final userDoc = FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(documentSnapshot.id);
+                                      userDoc.delete();
+                                    },
                                     icon: const Icon(Icons.delete))
                               ],
                             )),

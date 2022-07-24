@@ -4,7 +4,7 @@ import 'package:doctor_patient/screen/add_doctor_screen.dart';
 import 'package:doctor_patient/screen/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:doctor_patient/screen/admin_home_screen.dart';
 import 'login_screen.dart';
 
 class DoctorsListScreen extends StatefulWidget {
@@ -17,6 +17,7 @@ class DoctorsListScreen extends StatefulWidget {
 enum MenuItem {
   profilepage,
   logout,
+  dashboard,
 }
 
 class _DoctorsListScreenState extends State<DoctorsListScreen> {
@@ -71,12 +72,17 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                       MaterialPageRoute(builder: (context) => UserProfile()));
                 } else if (value == MenuItem.logout) {
                   logout(context);
+                } else if (value == MenuItem.dashboard) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AdminHomeScreen()));
                 }
               },
               itemBuilder: (context) => const [
                 PopupMenuItem(
                     value: MenuItem.profilepage, child: Text('Profile')),
-                PopupMenuItem(value: MenuItem.logout, child: Text('Logout'))
+                PopupMenuItem(value: MenuItem.logout, child: Text('Logout')),
+                PopupMenuItem(
+                    value: MenuItem.dashboard, child: Text('Dashboard'))
               ],
             )
           ],
@@ -99,7 +105,12 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                             child: Row(
                               children: [
                                 IconButton(
-                                    onPressed: () => UserProfile(),
+                                    onPressed: () {
+                                      final docUser = FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(documentSnapshot.id);
+                                      docUser.delete();
+                                    },
                                     icon: const Icon(Icons.delete))
                               ],
                             )),

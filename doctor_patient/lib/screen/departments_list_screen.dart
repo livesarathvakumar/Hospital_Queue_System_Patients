@@ -60,7 +60,8 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
                 } else if (value == MenuItem.logout) {
                   logout(context);
                 } else if (value == MenuItem.dashboard) {
-                  AdminHomeScreen();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AdminHomeScreen()));
                 }
               },
               itemBuilder: (context) => const [
@@ -91,7 +92,13 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
                             child: Row(
                               children: [
                                 IconButton(
-                                    onPressed: () => UserProfile(),
+                                    onPressed: () {
+                                      final departmentDoc = FirebaseFirestore
+                                          .instance
+                                          .collection('departments')
+                                          .doc(documentSnapshot.id);
+                                      departmentDoc.delete();
+                                    },
                                     icon: const Icon(Icons.delete))
                               ],
                             )),

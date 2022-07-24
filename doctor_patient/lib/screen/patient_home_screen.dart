@@ -35,6 +35,13 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
     });
   }
 
+  final Query<Map<String, dynamic>> _doctors = FirebaseFirestore.instance
+      .collection('users')
+      .where('role', isEqualTo: 'doctor');
+
+  final CollectionReference _products =
+      FirebaseFirestore.instance.collection('departments');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,10 +70,46 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Welcome'),
+              StreamBuilder(
+                  stream: _products.snapshots(),
+                  builder:
+                      (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                    if (streamSnapshot.hasData) {
+                      return ListView.builder(
+                        itemCount: streamSnapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final DocumentSnapshot documentSnapshot =
+                              streamSnapshot.data!.docs[index];
+                          return Card(
+                            margin: const EdgeInsets.all(10),
+                            child: ListTile(
+                              title: Text(documentSnapshot['name']),
+                              trailing: SizedBox(
+                                  width: 100,
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            final departmentDoc =
+                                                FirebaseFirestore.instance
+                                                    .collection('departments')
+                                                    .doc(documentSnapshot.id);
+                                            departmentDoc.delete();
+                                          },
+                                          icon: const Icon(Icons.delete))
+                                    ],
+                                  )),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (streamSnapshot.hasError) {
+                      return Text('has error');
+                    } else {
+                      return Text('no data');
+                    }
+                  })
             ],
           ),
         ),

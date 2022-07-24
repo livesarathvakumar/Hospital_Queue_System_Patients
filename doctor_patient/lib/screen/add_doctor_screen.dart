@@ -30,10 +30,9 @@ class _AddDoctorState extends State<AddDoctor> {
   // string for displaying the error Message
   String? errorMessage;
 
-  List<String> _accountType = <String>[
-    'Physco',
-    'ENT',
-  ];
+  var _category, dropDown;
+
+  get shopId => null;
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +68,9 @@ class _AddDoctorState extends State<AddDoctor> {
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
           onPressed: () {
-            final department = DoctorModel(firstName: doctorController.text);
-            createDepartment(department);
+            final department = DoctorModel(
+                firstName: doctorController.text, departmentId: _category);
+            createDoctor(department);
           },
           child: Text(
             "Add",
@@ -80,55 +80,88 @@ class _AddDoctorState extends State<AddDoctor> {
           )),
     );
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Add Department"),
-        centerTitle: true,
-        actions: [
-          PopupMenuButton<MenuItem>(
-            onSelected: (value) {
-              if (value == MenuItem.profilepage) {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => UserProfile()));
-              } else if (value == MenuItem.logout) {
-                logout(context);
-              }
-            },
-            itemBuilder: (context) => const [
-              PopupMenuItem(
-                  value: MenuItem.profilepage, child: Text('Profile')),
-              PopupMenuItem(value: MenuItem.logout, child: Text('Logout'))
-            ],
-          )
-        ],
-      ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: <Widget>[
-              departmentField,
-              SizedBox(
-                height: 15,
-              ),
-              addButton,
-              SizedBox(
-                height: 15,
-              ),
-              Row()
-            ],
-          ),
+        appBar: AppBar(
+          title: const Text("Add Department"),
+          centerTitle: true,
+          actions: [
+            PopupMenuButton<MenuItem>(
+              onSelected: (value) {
+                if (value == MenuItem.profilepage) {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => UserProfile()));
+                } else if (value == MenuItem.logout) {
+                  logout(context);
+                }
+              },
+              itemBuilder: (context) => const [
+                PopupMenuItem(
+                    value: MenuItem.profilepage, child: Text('Profile')),
+                PopupMenuItem(value: MenuItem.logout, child: Text('Logout'))
+              ],
+            )
+          ],
         ),
-      ),
-    );
+        body: Center(
+            child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(children: <Widget>[
+                  departmentField,
+                  SizedBox(
+                    height: 15,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Center(
+                      child: StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('departments')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) return Text('error');
+
+                            return Container(
+                              padding: EdgeInsets.only(bottom: 16.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 6,
+                                    child: DropdownButton<String>(
+                                      value: shopId,
+                                      isDense: true,
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _category = newValue;
+                                          dropDown = false;
+                                          print(_category);
+                                        });
+                                      },
+                                      hint: Text('Select Department'),
+                                      items: snapshot.data!.docs
+                                          .map((DocumentSnapshot document) {
+                                        //print(document.id);
+                                        return DropdownMenuItem<String>(
+                                          value: document.id,
+                                          child: Text(document['name']),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          })),
+                  addButton,
+                ]))));
   }
 
-  Future createDepartment(DoctorModel department) async {
+  Future createDoctor(DoctorModel department) async {
     final deparmentCollection =
         FirebaseFirestore.instance.collection('users').doc();
     department.id = deparmentCollection.id;
     final json = department.toJson();
     await deparmentCollection.set(json);
-    Fluttertoast.showToast(msg: "Department Created Successfully!");
+    Fluttertoast.showToast(msg: "Docter Created Successfully!");
 
     Navigator.pushAndRemoveUntil(
         (context),
