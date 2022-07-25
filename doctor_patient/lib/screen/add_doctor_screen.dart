@@ -30,9 +30,9 @@ class _AddDoctorState extends State<AddDoctor> {
   // string for displaying the error Message
   String? errorMessage;
 
-  var _category, dropDown;
+  var _category, dropDown, departmentChoosen;
 
-  get shopId => null;
+  //get departmentChoosen => null;
 
   @override
   Widget build(BuildContext context) {
@@ -127,12 +127,14 @@ class _AddDoctorState extends State<AddDoctor> {
                                   Expanded(
                                     flex: 6,
                                     child: DropdownButton<String>(
-                                      value: shopId,
+                                      value: departmentChoosen,
                                       isDense: true,
+                                      style: const TextStyle(fontSize: 18),
                                       onChanged: (String? newValue) {
                                         setState(() {
                                           _category = newValue;
                                           dropDown = false;
+                                          departmentChoosen = _category;
                                           print(_category);
                                         });
                                       },
