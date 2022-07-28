@@ -5,7 +5,9 @@ import 'package:doctor_patient/screen/patient_docselect_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
-
+import 'package:doctor_patient/model/appointment_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:doctor_patient/screen/patient_home_screen.dart';
 import 'login_screen.dart';
 
 class PatientsAppointmentFormScreen extends StatefulWidget {
@@ -21,8 +23,13 @@ enum MenuItem {
   logout,
 }
 
-final TextEditingController appointmentdate = new TextEditingController();
-final TextEditingController appointmenttime = new TextEditingController();
+//final TextEditingController appointmentdate = new TextEditingController();
+//final TextEditingController appointmenttime = new TextEditingController();
+String? selectdate;
+String? departmentId;
+String? departmentName;
+String? doctorId;
+String? doctorName;
 
 class _PatientsAppointmentFormScreenState
     extends State<PatientsAppointmentFormScreen> {
@@ -59,6 +66,26 @@ class _PatientsAppointmentFormScreenState
 
     final Query<Map<String, dynamic>> _timeslots =
         FirebaseFirestore.instance.collection('timeslots').orderBy('timeid');
+
+    //signup button
+    final appointmentButton = Material(
+      elevation: 5,
+      borderRadius: BorderRadius.circular(30),
+      color: Colors.redAccent,
+      child: MaterialButton(
+          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          minWidth: MediaQuery.of(context).size.width,
+          onPressed: () {
+            final appointment = AppointmentModel();
+            createAppointment(appointment);
+          },
+          child: Text(
+            "Book Appoinment",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          )),
+    );
 
     return Scaffold(
         appBar: AppBar(
@@ -111,6 +138,8 @@ class _PatientsAppointmentFormScreenState
                           itemBuilder: (context, index) {
                             final DocumentSnapshot documentSnapshot =
                                 streamSnapshot.data!.docs[index];
+                            doctorId = documentSnapshot.id;
+                            doctorName = documentSnapshot['firstName'];
                             return Card(
                                 margin: const EdgeInsets.all(0),
                                 child: SizedBox(
@@ -139,6 +168,8 @@ class _PatientsAppointmentFormScreenState
                         itemBuilder: (context, index) {
                           final DocumentSnapshot documentSnapshot =
                               streamSnapshot.data!.docs[index];
+                          departmentId = documentSnapshot.id;
+                          departmentName = documentSnapshot['name'];
                           return Card(
                             margin: const EdgeInsets.all(0),
                             child: SizedBox(
@@ -215,21 +246,55 @@ class _PatientsAppointmentFormScreenState
               timeLabelText: "Time",
               selectableDayPredicate: (date) {
                 // Disable weekend days to select from the calendar
-                if (date.weekday == 6 || date.weekday == 7) {
-                  return false;
-                }
+                // if (date.weekday == 6 || date.weekday == 7) {
+                //   return false;
+                // }
 
                 return true;
               },
-              onChanged: (val) => print(val),
+              onChanged: (val) {
+                selectdate = val;
+                print('changed value');
+                print(val);
+              },
               validator: (val) {
                 print(val);
                 return null;
               },
-              onSaved: (val) => print(val),
-            )
+              onSaved: (val) {
+                print('saved value');
+                print(val);
+              },
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            appointmentButton,
           ]),
         ));
+  }
+
+  Future createAppointment(AppointmentModel appointment) async {
+    final appointmentCollection =
+        FirebaseFirestore.instance.collection('appointment').doc();
+    print(doctorId);
+    print(selectdate);
+    appointment.id = appointmentCollection.id;
+    appointment.departmentId = departmentId;
+    appointment.departmentName = departmentName;
+    appointment.doctorId = doctorId;
+    appointment.doctorName = doctorName;
+    appointment.date = selectdate;
+    appointment.userId = loggedInUser.uid;
+    
+    final json = appointment.toJson();
+    await appointmentCollection.set(json);
+    Fluttertoast.showToast(msg: "Appointment Created Successfully!");
+
+    Navigator.pushAndRemoveUntil(
+        (context),
+        MaterialPageRoute(builder: (context) => PatientsHomeScreen()),
+        (route) => false);
   }
 
   // the logout function

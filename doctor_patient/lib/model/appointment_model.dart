@@ -3,16 +3,20 @@ import 'dart:convert';
 class AppointmentModel {
   String id;
   String? departmentId;
+  String? departmentName;
   String? doctorId;
-  DateTime? date;
-  DateTime? time;
+  String? doctorName;
+  String? date;
+  String? userId;
 
   AppointmentModel({
     this.id = '',
     this.departmentId,
+    this.departmentName,
     this.doctorId,
+    this.doctorName,
     this.date,
-    this.time,
+    this.userId,
   });
 
   // sending data to our server
@@ -20,9 +24,11 @@ class AppointmentModel {
     return {
       'id': id,
       'departmentId': departmentId,
+      'departmentName': departmentName,
       'doctorId': doctorId,
+      'doctorName': doctorName,
       'date': date,
-      'time': time,
+      'userId': userId,
     };
   }
 }

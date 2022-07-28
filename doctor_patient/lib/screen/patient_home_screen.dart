@@ -4,6 +4,7 @@ import 'package:doctor_patient/screen/profile_screen.dart';
 import 'package:doctor_patient/screen/patient_depselect_screen .dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'login_screen.dart';
 
@@ -18,6 +19,8 @@ enum MenuItem {
   profilepage,
   logout,
 }
+
+String? appointmentid;
 
 class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
@@ -57,6 +60,10 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                 fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
           )),
     );
+    final Query<Map<String, dynamic>> appointmentlist = FirebaseFirestore
+        .instance
+        .collection('appointment')
+        .where('userId', isEqualTo: loggedInUser.uid);
     return Scaffold(
         appBar: AppBar(
           title: const Text("Patient Home"),
@@ -107,6 +114,98 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
             SizedBox(
               height: 30,
             ),
+            SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+                height: 400,
+                child: StreamBuilder(
+                    stream: appointmentlist.snapshots(),
+                    builder:
+                        (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                      if (streamSnapshot.hasData) {
+                        // 1984–04–02 00:00:00.000
+
+                        return ListView.builder(
+                          itemCount: streamSnapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            final DocumentSnapshot documentSnapshot =
+                                streamSnapshot.data!.docs[index];
+                            appointmentid = documentSnapshot.id;
+                            String strDt = documentSnapshot['date'];
+                            DateTime parseDt = DateTime.parse(strDt);
+                            return Card(
+                                clipBehavior: Clip.antiAlias,
+                                margin: const EdgeInsets.all(5),
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      leading: Icon(
+                                        Icons.date_range,
+                                        color: Colors.black,
+                                      ),
+                                      title: Column(
+                                        children: <Widget>[
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                                DateFormat.yMMMEd()
+                                                    .format(parseDt),
+                                                textAlign: TextAlign.right,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18)),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                                documentSnapshot['doctorName'],
+                                                textAlign: TextAlign.right,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18)),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                                documentSnapshot[
+                                                    'departmentName'],
+                                                textAlign: TextAlign.right,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    //fontWeight: FontWeight.bold,
+                                                    fontSize: 16)),
+                                          ),
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                        ],
+                                      ),
+                                      // subtitle: Text(
+                                      //   DateFormat.yMMMEd().format(parseDt),
+                                      //   style: TextStyle(
+                                      //       fontWeight: FontWeight.bold,
+                                      //       fontSize: 20),
+                                      // ),
+                                      trailing: Text(
+                                        DateFormat.j().format(parseDt),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30),
+                                      ),
+                                    )
+                                  ],
+                                ));
+                          },
+                        );
+                      } else if (streamSnapshot.hasError) {
+                        return Text('has error');
+                      } else {
+                        return Text('Currently Doctors are not available');
+                      }
+                    })),
             bookAppoinmentButton,
             SizedBox(
               height: 20,
