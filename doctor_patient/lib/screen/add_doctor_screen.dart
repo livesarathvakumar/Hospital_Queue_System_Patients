@@ -81,7 +81,7 @@ class _AddDoctorState extends State<AddDoctor> {
     );
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Add Department"),
+          title: const Text("Add Doctor"),
           centerTitle: true,
           actions: [
             PopupMenuButton<MenuItem>(
@@ -121,15 +121,20 @@ class _AddDoctorState extends State<AddDoctor> {
                             if (!snapshot.hasData) return Text('error');
 
                             return Container(
+                              //color: Colors.black,
                               padding: EdgeInsets.only(bottom: 16.0),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
-                                    flex: 6,
+                                    //flex: 6,
                                     child: DropdownButton<String>(
+                                      // dropdownColor: Colors.black87,
+                                      // focusColor: Colors.black,
                                       value: departmentChoosen,
                                       isDense: true,
-                                      style: const TextStyle(fontSize: 18),
+                                      style: const TextStyle(
+                                          fontSize: 18, color: Colors.black87),
+                                      //dropdownColor: Color.fromRGBO(r, g, b, opacity),
                                       onChanged: (String? newValue) {
                                         setState(() {
                                           _category = newValue;
