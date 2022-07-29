@@ -39,6 +39,22 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
     });
   }
 
+  final _fireStore = FirebaseFirestore.instance;
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot =
+        await _fireStore.collection('appointment').get();
+    ;
+
+    // Get data from docs and convert map to List
+    final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    //for a specific field
+    final reportData =
+        querySnapshot.docs.map((doc) => doc.get('date')).toList();
+
+    print(reportData);
+  }
+
   @override
   Widget build(BuildContext context) {
     //signup button
@@ -50,6 +66,7 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
           onPressed: () {
+            getData();
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => PatientsDepartmentSelectScreen()));
           },
@@ -64,6 +81,7 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
         .instance
         .collection('appointment')
         .where('userId', isEqualTo: loggedInUser.uid);
+
     return Scaffold(
         appBar: AppBar(
           title: const Text("Patient Home"),
@@ -112,13 +130,21 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                       fontWeight: FontWeight.bold, fontSize: 20)),
             ),
             SizedBox(
-              height: 30,
+              height: 10,
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Your Appointments',
+                  textAlign: TextAlign.right,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20)),
             ),
             SizedBox(
               height: 20,
             ),
             SizedBox(
-                height: 400,
+                height: 200,
                 child: StreamBuilder(
                     stream: appointmentlist.snapshots(),
                     builder:
@@ -190,10 +216,10 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                                       //       fontSize: 20),
                                       // ),
                                       trailing: Text(
-                                        DateFormat.j().format(parseDt),
+                                        documentSnapshot['time'],
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 30),
+                                            fontSize: 20),
                                       ),
                                     )
                                   ],

@@ -7,6 +7,8 @@ class AppointmentModel {
   String? doctorId;
   String? doctorName;
   String? date;
+  String? time;
+  int? timeslotId;
   String? userId;
 
   AppointmentModel({
@@ -16,6 +18,8 @@ class AppointmentModel {
     this.doctorId,
     this.doctorName,
     this.date,
+    this.time,
+    this.timeslotId,
     this.userId,
   });
 
@@ -28,6 +32,8 @@ class AppointmentModel {
       'doctorId': doctorId,
       'doctorName': doctorName,
       'date': date,
+      'time': time,
+      'timeslotId': timeslotId,
       'userId': userId,
     };
   }

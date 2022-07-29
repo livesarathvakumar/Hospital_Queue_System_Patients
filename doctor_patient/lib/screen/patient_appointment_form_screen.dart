@@ -26,10 +26,14 @@ enum MenuItem {
 //final TextEditingController appointmentdate = new TextEditingController();
 //final TextEditingController appointmenttime = new TextEditingController();
 String? selectdate;
+String? time;
 String? departmentId;
 String? departmentName;
 String? doctorId;
 String? doctorName;
+int? timeslotId;
+
+final timeSlotEditingController = new TextEditingController();
 
 class _PatientsAppointmentFormScreenState
     extends State<PatientsAppointmentFormScreen> {
@@ -67,7 +71,32 @@ class _PatientsAppointmentFormScreenState
     final Query<Map<String, dynamic>> _timeslots =
         FirebaseFirestore.instance.collection('timeslots').orderBy('timeid');
 
-    //signup button
+    final timeSlotField = TextFormField(
+        autofocus: false,
+        enabled: false,
+        controller: timeSlotEditingController..text = '',
+        keyboardType: TextInputType.name,
+        validator: (value) {
+          RegExp regex = new RegExp(r'^.{3,}$');
+          if (value!.isEmpty) {
+            return ("Select a time slot");
+          }
+          return null;
+        },
+        onSaved: (value) {
+          timeSlotEditingController.text = value!;
+        },
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.punch_clock),
+          contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+          hintText: "Time Slots",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ));
+
+    //appointmentButton button
     final appointmentButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
@@ -192,53 +221,10 @@ class _PatientsAppointmentFormScreenState
                     }
                   }),
             ),
-            // SizedBox(
-            //   height: 300,
-            //   child: StreamBuilder(
-            //       stream: _timeslots.snapshots(),
-            //       builder:
-            //           (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-            //         if (streamSnapshot.hasData) {
-            //           return GridView.builder(
-            //             gridDelegate:
-            //                 const SliverGridDelegateWithFixedCrossAxisCount(
-            //               crossAxisCount: 3,
-            //             ),
-            //             itemCount: streamSnapshot.data!.docs.length,
-            //             itemBuilder: (context, index) {
-            //               final DocumentSnapshot documentSnapshot =
-            //                   streamSnapshot.data!.docs[index];
-            //               return SizedBox(
-            //                   height: 70,
-            //                   width: 100,
-            //                   child: Card(
-            //                       margin: const EdgeInsets.all(5),
-            //                       child: TextButton(
-            //                         style: ButtonStyle(
-            //                           foregroundColor:
-            //                               MaterialStateProperty.all<Color>(
-            //                                   Colors.blue),
-            //                         ),
-            //                         onPressed: () {
-            //                           print(
-            //                             documentSnapshot['timeid'],
-            //                           );
-            //                         },
-            //                         child: Text(documentSnapshot['times']),
-            //                       )));
-            //             },
-            //           );
-            //         } else if (streamSnapshot.hasError) {
-            //           return Text('has error');
-            //         } else {
-            //           return Text('no data');
-            //         }
-            //       }),
-            // ),
             DateTimePicker(
-              type: DateTimePickerType.dateTimeSeparate,
+              type: DateTimePickerType.date,
               dateMask: 'd MMM, yyyy',
-              initialValue: DateTime.now().toString(),
+              //initialValue: DateTime.now().toString(),
               firstDate: DateTime(2022),
               lastDate: DateTime(2100),
               icon: Icon(Icons.event),
@@ -267,7 +253,60 @@ class _PatientsAppointmentFormScreenState
               },
             ),
             SizedBox(
-              height: 20,
+              height: 10,
+            ),
+            SizedBox(
+              height: 250,
+              child: StreamBuilder(
+                  stream: _timeslots.snapshots(),
+                  builder:
+                      (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                    if (streamSnapshot.hasData) {
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                        ),
+                        itemCount: streamSnapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final DocumentSnapshot documentSnapshot =
+                              streamSnapshot.data!.docs[index];
+                          return SizedBox(
+                              height: 70,
+                              width: 100,
+                              child: Card(
+                                  margin: const EdgeInsets.all(5),
+                                  child: TextButton(
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.blue),
+                                    ),
+                                    onPressed: () {
+                                      timeSlotEditingController.text =
+                                          documentSnapshot['times'];
+                                      print(
+                                        documentSnapshot['timeid'],
+                                      );
+                                      timeslotId = documentSnapshot['timeid'];
+                                      time = documentSnapshot['times'];
+                                      print(timeslotId);
+                                      print(time);
+                                    },
+                                    child: Text(documentSnapshot['times']),
+                                  )));
+                        },
+                      );
+                    } else if (streamSnapshot.hasError) {
+                      return Text('has error');
+                    } else {
+                      return Text('no data');
+                    }
+                  }),
+            ),
+            timeSlotField,
+            SizedBox(
+              height: 10,
             ),
             appointmentButton,
           ]),
@@ -279,6 +318,7 @@ class _PatientsAppointmentFormScreenState
         FirebaseFirestore.instance.collection('appointment').doc();
     print(doctorId);
     print(selectdate);
+    //strDt = selectdate
     appointment.id = appointmentCollection.id;
     appointment.departmentId = departmentId;
     appointment.departmentName = departmentName;
@@ -286,7 +326,9 @@ class _PatientsAppointmentFormScreenState
     appointment.doctorName = doctorName;
     appointment.date = selectdate;
     appointment.userId = loggedInUser.uid;
-    
+    appointment.timeslotId = timeslotId;
+    appointment.time = time;
+
     final json = appointment.toJson();
     await appointmentCollection.set(json);
     Fluttertoast.showToast(msg: "Appointment Created Successfully!");
