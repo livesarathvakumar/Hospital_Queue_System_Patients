@@ -37,7 +37,7 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
           width: 60,
           child: FloatingActionButton(
             child: Icon(Icons.add),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: Colors.green,
             foregroundColor: Colors.white,
             elevation: 5.0,
             tooltip: "Press to Add Department",
@@ -49,6 +49,7 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
           ),
         ),
         appBar: AppBar(
+          backgroundColor: Colors.green[800],
           title: const Text("Department List"),
           centerTitle: true,
           actions: [
@@ -84,6 +85,7 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
                     final DocumentSnapshot documentSnapshot =
                         streamSnapshot.data!.docs[index];
                     return Card(
+                      color: Colors.green[100],
                       margin: const EdgeInsets.all(10),
                       child: ListTile(
                         title: Text(documentSnapshot['name']),
@@ -99,7 +101,10 @@ class _DepartmentListScreenState extends State<DepartmentListScreen> {
                                           .doc(documentSnapshot.id);
                                       departmentDoc.delete();
                                     },
-                                    icon: const Icon(Icons.delete))
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ))
                               ],
                             )),
                       ),

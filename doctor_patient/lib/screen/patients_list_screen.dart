@@ -45,6 +45,7 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green[800],
           title: const Text("Patients"),
           centerTitle: true,
           actions: [
@@ -81,6 +82,7 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
                         streamSnapshot.data!.docs[index];
                     return Card(
                       margin: const EdgeInsets.all(10),
+                      color: Colors.green[200],
                       child: ListTile(
                         title: Text(documentSnapshot['firstName']),
                         trailing: SizedBox(
@@ -94,7 +96,10 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
                                           .doc(documentSnapshot.id);
                                       userDoc.delete();
                                     },
-                                    icon: const Icon(Icons.delete))
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ))
                               ],
                             )),
                       ),

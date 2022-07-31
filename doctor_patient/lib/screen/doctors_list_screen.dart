@@ -50,7 +50,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
           width: 60,
           child: FloatingActionButton(
             child: Icon(Icons.add),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: Colors.green,
             foregroundColor: Colors.white,
             elevation: 5.0,
             tooltip: "Press to Add Department",
@@ -62,6 +62,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
           ),
         ),
         appBar: AppBar(
+          backgroundColor: Colors.green[800],
           title: const Text("Doctors"),
           centerTitle: true,
           actions: [
@@ -97,6 +98,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                     final DocumentSnapshot documentSnapshot =
                         streamSnapshot.data!.docs[index];
                     return Card(
+                      color: Colors.green[100],
                       margin: const EdgeInsets.all(10),
                       child: ListTile(
                         title: Text(documentSnapshot['firstName']),
@@ -111,7 +113,10 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                           .doc(documentSnapshot.id);
                                       docUser.delete();
                                     },
-                                    icon: const Icon(Icons.delete))
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ))
                               ],
                             )),
                       ),

@@ -8,6 +8,7 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:doctor_patient/model/appointment_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:doctor_patient/screen/patient_home_screen.dart';
+import 'package:intl/intl.dart';
 import 'login_screen.dart';
 
 class PatientsAppointmentFormScreen extends StatefulWidget {
@@ -25,13 +26,16 @@ enum MenuItem {
 
 //final TextEditingController appointmentdate = new TextEditingController();
 //final TextEditingController appointmenttime = new TextEditingController();
-String? selectdate;
+
 String? time;
 String? departmentId;
 String? departmentName;
 String? doctorId;
 String? doctorName;
 int? timeslotId;
+
+var now = DateTime.now();
+String? selectdate = DateFormat('yyyy-MM-dd').format(now);
 
 final timeSlotEditingController = new TextEditingController();
 
@@ -51,6 +55,13 @@ class _PatientsAppointmentFormScreenState
       this.loggedInUser = UserModel.fromMap(value.data());
       setState(() {});
     });
+  }
+
+  final _fireStore = FirebaseFirestore.instance;
+  Future<int> getData() async {
+    QuerySnapshot snapshot = await _fireStore.collection('appointment').get();
+    int count = snapshot.size;
+    return count;
   }
 
   @override
@@ -100,7 +111,7 @@ class _PatientsAppointmentFormScreenState
     final appointmentButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.redAccent,
+      color: Colors.green,
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -118,6 +129,7 @@ class _PatientsAppointmentFormScreenState
 
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green[800],
           title: const Text("Patient Home"),
           centerTitle: true,
           actions: [
@@ -138,7 +150,7 @@ class _PatientsAppointmentFormScreenState
             )
           ],
         ),
-        body: Padding(
+        body: SingleChildScrollView(
           padding: EdgeInsets.all(15),
           child: Column(children: <Widget>[
             SizedBox(
@@ -150,7 +162,9 @@ class _PatientsAppointmentFormScreenState
                   textAlign: TextAlign.right,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18)),
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18)),
             ),
             SizedBox(
               height: 20,
@@ -163,6 +177,8 @@ class _PatientsAppointmentFormScreenState
                         (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                       if (streamSnapshot.hasData) {
                         return ListView.builder(
+                          shrinkWrap: true,
+                          physics: ClampingScrollPhysics(),
                           itemCount: streamSnapshot.data!.docs.length,
                           itemBuilder: (context, index) {
                             final DocumentSnapshot documentSnapshot =
@@ -170,11 +186,21 @@ class _PatientsAppointmentFormScreenState
                             doctorId = documentSnapshot.id;
                             doctorName = documentSnapshot['firstName'];
                             return Card(
+                                color: Colors.green[100],
                                 margin: const EdgeInsets.all(0),
                                 child: SizedBox(
                                   height: 60,
                                   child: ListTile(
-                                    title: Text(documentSnapshot['firstName']),
+                                    title: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(documentSnapshot['firstName'],
+                                          textAlign: TextAlign.right,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              //fontWeight: FontWeight.bold,
+                                              fontSize: 18)),
+                                    ),
                                   ),
                                 ));
                           },
@@ -193,6 +219,8 @@ class _PatientsAppointmentFormScreenState
                       (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                     if (streamSnapshot.hasData) {
                       return ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
                         itemCount: streamSnapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           final DocumentSnapshot documentSnapshot =
@@ -200,16 +228,21 @@ class _PatientsAppointmentFormScreenState
                           departmentId = documentSnapshot.id;
                           departmentName = documentSnapshot['name'];
                           return Card(
+                            color: Colors.green[100],
                             margin: const EdgeInsets.all(0),
                             child: SizedBox(
                                 height: 60,
                                 child: ListTile(
-                                  // onTap: () {
-                                  //   print(
-                                  //     documentSnapshot.id,
-                                  //   );
-                                  // },
-                                  title: Text(documentSnapshot['name']),
+                                  title: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(documentSnapshot['name'],
+                                        textAlign: TextAlign.right,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            //fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                  ),
                                 )),
                           );
                         },
@@ -223,9 +256,10 @@ class _PatientsAppointmentFormScreenState
             ),
             DateTimePicker(
               type: DateTimePickerType.date,
+
               dateMask: 'd MMM, yyyy',
               //initialValue: DateTime.now().toString(),
-              firstDate: DateTime(2022),
+              firstDate: DateTime.now().subtract(Duration(days: 1)),
               lastDate: DateTime(2100),
               icon: Icon(Icons.event),
               dateLabelText: 'Date',
@@ -255,14 +289,16 @@ class _PatientsAppointmentFormScreenState
             SizedBox(
               height: 10,
             ),
-            SizedBox(
-              height: 250,
+            Container(
+              // height: 250,
               child: StreamBuilder(
                   stream: _timeslots.snapshots(),
                   builder:
                       (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                     if (streamSnapshot.hasData) {
                       return GridView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
@@ -272,15 +308,18 @@ class _PatientsAppointmentFormScreenState
                           final DocumentSnapshot documentSnapshot =
                               streamSnapshot.data!.docs[index];
                           return SizedBox(
-                              height: 70,
+                              height: 50,
                               width: 100,
                               child: Card(
                                   margin: const EdgeInsets.all(5),
                                   child: TextButton(
                                     style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.green),
                                       foregroundColor:
                                           MaterialStateProperty.all<Color>(
-                                              Colors.blue),
+                                              Colors.white),
                                     ),
                                     onPressed: () {
                                       timeSlotEditingController.text =
@@ -304,11 +343,17 @@ class _PatientsAppointmentFormScreenState
                     }
                   }),
             ),
+            SizedBox(
+              height: 10,
+            ),
             timeSlotField,
             SizedBox(
               height: 10,
             ),
             appointmentButton,
+            SizedBox(
+              height: 40,
+            ),
           ]),
         ));
   }
@@ -316,9 +361,9 @@ class _PatientsAppointmentFormScreenState
   Future createAppointment(AppointmentModel appointment) async {
     final appointmentCollection =
         FirebaseFirestore.instance.collection('appointment').doc();
-    print(doctorId);
-    print(selectdate);
     //strDt = selectdate
+    final fireStore = FirebaseFirestore.instance;
+    QuerySnapshot snapshot = await fireStore.collection('appointment').get();
     appointment.id = appointmentCollection.id;
     appointment.departmentId = departmentId;
     appointment.departmentName = departmentName;
@@ -328,6 +373,8 @@ class _PatientsAppointmentFormScreenState
     appointment.userId = loggedInUser.uid;
     appointment.timeslotId = timeslotId;
     appointment.time = time;
+    appointment.token = snapshot.size + 100;
+    appointment.patientName = loggedInUser.firstName;
 
     final json = appointment.toJson();
     await appointmentCollection.set(json);

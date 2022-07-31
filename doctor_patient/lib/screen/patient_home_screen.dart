@@ -3,6 +3,7 @@ import 'package:doctor_patient/model/user_model.dart';
 import 'package:doctor_patient/screen/profile_screen.dart';
 import 'package:doctor_patient/screen/patient_depselect_screen .dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:doctor_patient/screen/view_queue_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -18,6 +19,14 @@ class PatientsHomeScreen extends StatefulWidget {
 enum MenuItem {
   profilepage,
   logout,
+}
+
+class ViewQueueArguments {
+  final String departmentId;
+  final String doctorId;
+  final String date;
+
+  ViewQueueArguments(this.departmentId, this.doctorId, this.date);
 }
 
 String? appointmentid;
@@ -39,51 +48,86 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
     });
   }
 
-  final _fireStore = FirebaseFirestore.instance;
-  Future<void> getData() async {
-    // Get docs from collection reference
-    QuerySnapshot querySnapshot =
-        await _fireStore.collection('appointment').get();
-    ;
+  // final _fireStore = FirebaseFirestore.instance;
+  // Future<void> getData() async {
+  //   // Get docs from collection reference
+  //   QuerySnapshot querySnapshot =
+  //       await _fireStore.collection('appointment').get();
+  //   ;
 
-    // Get data from docs and convert map to List
-    final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-    //for a specific field
-    final reportData =
-        querySnapshot.docs.map((doc) => doc.get('date')).toList();
+  //   // Get data from docs and convert map to List
+  //   final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+  //   //for a specific field
+  //   final reportData =
+  //       querySnapshot.docs.map((doc) => doc.get('date')).toList();
 
-    print(reportData);
-  }
+  //   print(reportData);
+  //   QuerySnapshot snapshot = await _fireStore.collection('appointment').get();
+  //   int count = snapshot.size;
+  //   print(count);
+  // }
 
   @override
   Widget build(BuildContext context) {
-    //signup button
-    final bookAppoinmentButton = Material(
-      elevation: 5,
-      borderRadius: BorderRadius.circular(30),
-      color: Colors.redAccent,
-      child: MaterialButton(
-          padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          minWidth: MediaQuery.of(context).size.width,
-          onPressed: () {
-            getData();
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => PatientsDepartmentSelectScreen()));
-          },
-          child: Text(
-            "Book Appoinment",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-          )),
-    );
+    //bookAppoinmentButton button
+    bool show = true;
+    print(show);
+    Future<int> getCount() async {
+      int count = await FirebaseFirestore.instance
+          .collection('appointment')
+          .get()
+          .then((value) => value.size);
+      print(count);
+      if (count == 0) {
+        print('this');
+        show = false;
+        print(show);
+      }
+      return count;
+    }
+
+    //int text = getCount();
+    print(show);
+    showButton() {
+      if (show) {
+        return SizedBox();
+      } else {
+        return Material(
+          elevation: 5,
+          borderRadius: BorderRadius.circular(30),
+          color: Colors.green,
+          child: MaterialButton(
+              padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+              minWidth: MediaQuery.of(context).size.width,
+              onPressed: () {
+                //getData();
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => PatientsDepartmentSelectScreen()));
+              },
+              child: Text(
+                "Book Appoinment",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              )),
+        );
+      }
+      //return count;
+    }
+
     final Query<Map<String, dynamic>> appointmentlist = FirebaseFirestore
         .instance
         .collection('appointment')
         .where('userId', isEqualTo: loggedInUser.uid);
+    // .orderBy("id");
+    //.orderBy('id');
 
+    // getData();
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green[800],
           title: const Text("Patient Home"),
           centerTitle: true,
           actions: [
@@ -104,7 +148,7 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
             )
           ],
         ),
-        body: Padding(
+        body: SingleChildScrollView(
           padding: EdgeInsets.all(15),
           child: Column(children: <Widget>[
             SizedBox(
@@ -116,7 +160,9 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                   textAlign: TextAlign.right,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 20)),
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22)),
             ),
             SizedBox(
               height: 5,
@@ -127,24 +173,27 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                   textAlign: TextAlign.right,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 20)),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Your Appointments',
-                  textAlign: TextAlign.right,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 20)),
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20)),
             ),
             SizedBox(
               height: 20,
             ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(' Your Appointments',
+                  textAlign: TextAlign.right,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20)),
+            ),
             SizedBox(
-                height: 200,
+              height: 20,
+            ),
+            Container(
                 child: StreamBuilder(
                     stream: appointmentlist.snapshots(),
                     builder:
@@ -153,6 +202,8 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                         // 1984–04–02 00:00:00.000
 
                         return ListView.builder(
+                          shrinkWrap: true,
+                          physics: ClampingScrollPhysics(),
                           itemCount: streamSnapshot.data!.docs.length,
                           itemBuilder: (context, index) {
                             final DocumentSnapshot documentSnapshot =
@@ -161,11 +212,34 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                             String strDt = documentSnapshot['date'];
                             DateTime parseDt = DateTime.parse(strDt);
                             return Card(
+                                color: Colors.green[100],
+                                shadowColor: Colors.green[200],
                                 clipBehavior: Clip.antiAlias,
                                 margin: const EdgeInsets.all(5),
                                 child: Column(
                                   children: [
                                     ListTile(
+                                      onTap: () {
+                                        print(
+                                          documentSnapshot.id,
+                                        );
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const ViewQueueScreen(),
+                                                // Pass the arguments as part of the RouteSettings. The
+                                                // DetailScreen reads the arguments from these settings.
+                                                settings: RouteSettings(
+                                                    arguments:
+                                                        ViewQueueArguments(
+                                                            documentSnapshot[
+                                                                'departmentId'],
+                                                            documentSnapshot[
+                                                                'doctorId'],
+                                                            documentSnapshot[
+                                                                'date']))));
+                                      },
                                       leading: Icon(
                                         Icons.date_range,
                                         color: Colors.black,
@@ -175,12 +249,22 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                                           Align(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
+                                                'Token No: ${documentSnapshot['token'].toString()}',
+                                                textAlign: TextAlign.right,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20)),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
                                                 DateFormat.yMMMEd()
                                                     .format(parseDt),
                                                 textAlign: TextAlign.right,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
+                                                    //fontWeight: FontWeight.bold,
                                                     fontSize: 18)),
                                           ),
                                           Align(
@@ -229,13 +313,14 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                       } else if (streamSnapshot.hasError) {
                         return Text('has error');
                       } else {
+                        print(1);
                         return Text('Currently Doctors are not available');
                       }
                     })),
-            bookAppoinmentButton,
             SizedBox(
-              height: 20,
-            )
+              height: 10,
+            ),
+            showButton(),
           ]),
         ));
   }

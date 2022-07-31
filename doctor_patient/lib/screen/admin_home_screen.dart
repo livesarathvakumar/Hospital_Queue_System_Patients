@@ -30,7 +30,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     final departmentBtn = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(5),
-      color: Colors.redAccent,
+      color: Colors.green,
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -52,7 +52,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     final doctorsListBtn = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(5),
-      color: Colors.redAccent,
+      color: Colors.green,
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -74,7 +74,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     final patientsListBtn = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(5),
-      color: Colors.redAccent,
+      color: Colors.green,
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -95,6 +95,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green[800],
         title: const Text("Admin Dashboard"),
         centerTitle: true,
         actions: [

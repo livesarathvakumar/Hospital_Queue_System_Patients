@@ -60,6 +60,7 @@ class _PatientsDoctorSelectScreenState
     print('helo world');
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green[800],
           title: const Text("Patient Home"),
           centerTitle: true,
           actions: [
@@ -92,7 +93,9 @@ class _PatientsDoctorSelectScreenState
                   textAlign: TextAlign.right,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18)),
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18)),
             ),
             SizedBox(
               height: 20,
@@ -106,11 +109,15 @@ class _PatientsDoctorSelectScreenState
                             AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                           if (streamSnapshot.hasData) {
                             return ListView.builder(
+                              shrinkWrap: true,
+                              physics: ClampingScrollPhysics(),
                               itemCount: streamSnapshot.data!.docs.length,
                               itemBuilder: (context, index) {
                                 final DocumentSnapshot documentSnapshot =
                                     streamSnapshot.data!.docs[index];
                                 return Card(
+                                  color: Colors.green[100],
+                                  shadowColor: Colors.green[200],
                                   margin: const EdgeInsets.all(10),
                                   child: ListTile(
                                     onTap: () {
@@ -130,7 +137,20 @@ class _PatientsDoctorSelectScreenState
                                                           'departmentId'],
                                                       documentSnapshot.id))));
                                     },
-                                    title: Text(documentSnapshot['firstName']),
+                                    leading: Icon(
+                                      Icons.supervised_user_circle,
+                                      color: Colors.black,
+                                    ),
+                                    title: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(documentSnapshot['firstName'],
+                                          textAlign: TextAlign.right,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
+                                          )),
+                                    ),
                                   ),
                                 );
                               },

@@ -47,6 +47,7 @@ class _PatientsDepartmentSelectScreenState
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green[800],
           title: const Text("Departments"),
           centerTitle: true,
           actions: [
@@ -67,7 +68,7 @@ class _PatientsDepartmentSelectScreenState
             )
           ],
         ),
-        body: Padding(
+        body: SingleChildScrollView(
           padding: EdgeInsets.all(15),
           child: Column(children: <Widget>[
             SizedBox(
@@ -79,13 +80,15 @@ class _PatientsDepartmentSelectScreenState
                   textAlign: TextAlign.right,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18)),
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18)),
             ),
             SizedBox(
               height: 20,
             ),
             SizedBox(
-              height: 150,
+              height: 400,
               child: departmentBox(),
             ),
             SizedBox(
@@ -100,17 +103,19 @@ class _PatientsDepartmentSelectScreenState
       builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
         if (streamSnapshot.hasData) {
           return ListView.builder(
-            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
+            //scrollDirection: Axis.horizontal,
             itemCount: streamSnapshot.data!.docs.length,
             itemBuilder: (context, index) {
               final DocumentSnapshot documentSnapshot =
                   streamSnapshot.data!.docs[index];
               return Container(
                   color: Colors.white,
-                  width: 150,
-                  height: 100,
+                  height: 70,
                   child: Card(
-                    color: Colors.green,
+                    color: Colors.green[100],
+                    shadowColor: Colors.green[200],
                     margin: const EdgeInsets.all(5),
                     child: ListTile(
                       onTap: () {
@@ -129,11 +134,20 @@ class _PatientsDepartmentSelectScreenState
                           ),
                         );
                       },
-                      title: Text(documentSnapshot['name'],
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontSize: 18, color: Colors.white)),
+                      leading: Icon(
+                        Icons.add_business,
+                        color: Colors.black,
+                      ),
+                      title: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(documentSnapshot['name'],
+                            textAlign: TextAlign.right,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            )),
+                      ),
                     ),
                   ));
             },

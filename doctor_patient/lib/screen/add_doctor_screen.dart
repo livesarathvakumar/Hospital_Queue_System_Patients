@@ -63,7 +63,7 @@ class _AddDoctorState extends State<AddDoctor> {
     final addButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.redAccent,
+      color: Colors.green,
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -81,6 +81,7 @@ class _AddDoctorState extends State<AddDoctor> {
     );
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green[800],
           title: const Text("Add Doctor"),
           centerTitle: true,
           actions: [

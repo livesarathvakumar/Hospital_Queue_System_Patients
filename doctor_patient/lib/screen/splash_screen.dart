@@ -52,7 +52,13 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Welcome spalsh'),
+            SizedBox(
+                height: 180,
+                child: Image.asset(
+                  "assets/doctorpatient.png",
+                  fit: BoxFit.contain,
+                )),
+            Text('Welcome')
           ],
         ),
       ),

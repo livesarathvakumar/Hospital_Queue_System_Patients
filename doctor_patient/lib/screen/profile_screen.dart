@@ -37,8 +37,9 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Doctor Patient Admin"),
+        title: const Text("Profile"),
         centerTitle: true,
         actions: [
           PopupMenuButton<MenuItem>(
@@ -67,33 +68,55 @@ class _UserProfileState extends State<UserProfile> {
             children: <Widget>[
               SizedBox(
                 height: 150,
-                child: Image.asset("assets/logo.png", fit: BoxFit.contain),
+                child: Image.asset("assets/doctorpatient.png",
+                    fit: BoxFit.contain),
               ),
               Text(
-                "Welcome Admin",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                "Welcome",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
               ),
               SizedBox(
                 height: 10,
               ),
               Text("${loggedInUser.firstName} ${loggedInUser.secondName}",
                   style: TextStyle(
-                    color: Colors.black54,
+                    fontSize: 22,
+                    color: Colors.green[500],
                     fontWeight: FontWeight.w500,
                   )),
+              SizedBox(
+                height: 5,
+              ),
               Text("${loggedInUser.email}",
                   style: TextStyle(
-                    color: Colors.black54,
+                    color: Colors.green[400],
                     fontWeight: FontWeight.w500,
                   )),
               SizedBox(
                 height: 15,
               ),
-              ActionChip(
-                  label: Text("Logout"),
-                  onPressed: () {
-                    logout(context);
-                  }),
+              Material(
+                elevation: 5,
+                borderRadius: BorderRadius.circular(30),
+                color: Colors.green,
+                child: MaterialButton(
+                    padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                    minWidth: MediaQuery.of(context).size.width,
+                    onPressed: () {
+                      logout(context);
+                    },
+                    child: Text(
+                      "Logout",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    )),
+              ),
             ],
           ),
         ),

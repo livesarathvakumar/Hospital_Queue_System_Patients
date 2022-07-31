@@ -59,7 +59,7 @@ class _AddDepartmentState extends State<AddDepartment> {
     final addButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
-      color: Colors.redAccent,
+      color: Colors.green,
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
@@ -76,6 +76,7 @@ class _AddDepartmentState extends State<AddDepartment> {
     );
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green[800],
         title: const Text("Add Department"),
         centerTitle: true,
         actions: [

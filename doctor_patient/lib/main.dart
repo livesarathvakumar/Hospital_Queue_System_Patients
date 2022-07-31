@@ -16,9 +16,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Email And Password Login',
+      title: 'Doctor Patient Appointment Booking',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.green,
       ),
       debugShowCheckedModeBanner: false,
       home: MainPage(),
