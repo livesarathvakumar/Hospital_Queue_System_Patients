@@ -33,6 +33,7 @@ String? departmentName;
 String? doctorId;
 String? doctorName;
 int? timeslotId;
+String? selectedtimes;
 
 var now = DateTime.now();
 String? selectdate = DateFormat('yyyy-MM-dd').format(now);
@@ -327,8 +328,14 @@ class _PatientsAppointmentFormScreenState
                                       print(
                                         documentSnapshot['timeid'],
                                       );
+
+                                      selectedtimes = DateFormat.Hms().format(
+                                          documentSnapshot['timeformat']
+                                              .toDate());
+
                                       timeslotId = documentSnapshot['timeid'];
                                       time = documentSnapshot['times'];
+                                      //print(parsedDate);
                                       print(timeslotId);
                                       print(time);
                                     },
@@ -362,6 +369,16 @@ class _PatientsAppointmentFormScreenState
     final appointmentCollection =
         FirebaseFirestore.instance.collection('appointment').doc();
     //strDt = selectdate
+
+    var selecteddatetime = selectdate! + ' ' + selectedtimes.toString();
+    print(selectedtimes);
+    var timeformat = DateTime.parse(selecteddatetime.toString());
+
+    print(selectdate);
+    print(selectedtimes.toString());
+    print(selecteddatetime);
+    print(timeformat);
+
     final fireStore = FirebaseFirestore.instance;
     QuerySnapshot snapshot = await fireStore.collection('appointment').get();
     appointment.id = appointmentCollection.id;
@@ -375,6 +392,8 @@ class _PatientsAppointmentFormScreenState
     appointment.time = time;
     appointment.token = snapshot.size + 100;
     appointment.patientName = loggedInUser.firstName;
+    appointment.timeformat = timeformat;
+    appointment.active = true;
 
     final json = appointment.toJson();
     await appointmentCollection.set(json);

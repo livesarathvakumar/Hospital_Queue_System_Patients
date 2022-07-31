@@ -12,6 +12,8 @@ class AppointmentModel {
   String? userId;
   int? token;
   String? patientName;
+  DateTime? timeformat;
+  bool? active;
 
   AppointmentModel({
     this.id = '',
@@ -25,6 +27,8 @@ class AppointmentModel {
     this.userId,
     this.token,
     this.patientName,
+    this.timeformat,
+    this.active,
   });
 
   // sending data to our server
@@ -41,6 +45,8 @@ class AppointmentModel {
       'userId': userId,
       'token': token,
       'patientName': patientName,
+      'timeformat': timeformat,
+      'active': active,
     };
   }
 }

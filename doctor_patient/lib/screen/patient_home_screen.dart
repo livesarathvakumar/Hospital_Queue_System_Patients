@@ -5,6 +5,7 @@ import 'package:doctor_patient/screen/patient_depselect_screen .dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:doctor_patient/screen/view_queue_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 import 'login_screen.dart';
@@ -25,8 +26,11 @@ class ViewQueueArguments {
   final String departmentId;
   final String doctorId;
   final String date;
+  final int token;
+  final String time;
 
-  ViewQueueArguments(this.departmentId, this.doctorId, this.date);
+  ViewQueueArguments(
+      this.departmentId, this.doctorId, this.date, this.token, this.time);
 }
 
 String? appointmentid;
@@ -112,10 +116,17 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
       );
     }
 
+    var today = DateTime.now();
+    var fiftyDaysFromNow = today.add(Duration(minutes: 15));
+
+    print(fiftyDaysFromNow);
+    print('fiftyDaysFromNowfiftyDaysFromNow');
     final Query<Map<String, dynamic>> appointmentlist = FirebaseFirestore
         .instance
         .collection('appointment')
-        .where('userId', isEqualTo: loggedInUser.uid);
+        .where('userId', isEqualTo: loggedInUser.uid)
+        .where("timeformat", isGreaterThanOrEqualTo: fiftyDaysFromNow)
+        .where('active', isEqualTo: true);
     // .orderBy("id");
     //.orderBy('id');
 
@@ -206,6 +217,12 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                             appointmentid = documentSnapshot.id;
                             String strDt = documentSnapshot['date'];
                             DateTime parseDt = DateTime.parse(strDt);
+                            print(DateFormat.Hms().format(
+                                documentSnapshot['timeformat'].toDate()));
+                            print('thissssssssss');
+                            print(documentSnapshot['time']);
+                            print(DateTime.now());
+                            print('helllllllllllllll');
                             return Card(
                                 color: Colors.green[100],
                                 shadowColor: Colors.green[200],
@@ -215,9 +232,9 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                                   children: [
                                     ListTile(
                                       onTap: () {
-                                        print(
-                                          documentSnapshot.id,
-                                        );
+                                        print(documentSnapshot['token']);
+                                        print('thissssss');
+
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -233,7 +250,11 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                                                             documentSnapshot[
                                                                 'doctorId'],
                                                             documentSnapshot[
-                                                                'date']))));
+                                                                'date'],
+                                                            documentSnapshot[
+                                                                'token'],
+                                                            documentSnapshot[
+                                                                'time']))));
                                       },
                                       leading: Icon(
                                         Icons.date_range,
@@ -251,6 +272,9 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 20)),
                                           ),
+                                          SizedBox(
+                                            height: 05,
+                                          ),
                                           Align(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
@@ -259,8 +283,24 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                                                 textAlign: TextAlign.right,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: const TextStyle(
-                                                    //fontWeight: FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize: 18)),
+                                          ),
+                                          SizedBox(
+                                            height: 05,
+                                          ),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                                documentSnapshot['time'],
+                                                textAlign: TextAlign.right,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20)),
+                                          ),
+                                          SizedBox(
+                                            height: 05,
                                           ),
                                           Align(
                                             alignment: Alignment.centerLeft,
@@ -271,6 +311,9 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                                                 style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 18)),
+                                          ),
+                                          SizedBox(
+                                            height: 05,
                                           ),
                                           Align(
                                             alignment: Alignment.centerLeft,
@@ -284,7 +327,10 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                                                     fontSize: 16)),
                                           ),
                                           SizedBox(
-                                            height: 15,
+                                            height: 05,
+                                          ),
+                                          SizedBox(
+                                            height: 10,
                                           ),
                                         ],
                                       ),
@@ -294,12 +340,38 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
                                       //       fontWeight: FontWeight.bold,
                                       //       fontSize: 20),
                                       // ),
-                                      trailing: Text(
-                                        documentSnapshot['time'],
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
+                                      trailing: SizedBox(
+                                          width: 50,
+                                          child: Row(
+                                            children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    final departmentDoc =
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'appointment')
+                                                            .doc(
+                                                                documentSnapshot
+                                                                    .id);
+                                                    departmentDoc.update(
+                                                        {"active": false});
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Appointment Deleted Successfully!");
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  )),
+                                              // Text(
+                                              //   documentSnapshot['time'],
+                                              //   style: TextStyle(
+                                              //       fontWeight: FontWeight.bold,
+                                              //       fontSize: 20),
+                                              // ),
+                                            ],
+                                          )),
                                     )
                                   ],
                                 ));
