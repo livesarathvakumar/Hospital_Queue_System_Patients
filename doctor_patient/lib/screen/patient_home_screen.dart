@@ -70,24 +70,24 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
   @override
   Widget build(BuildContext context) {
     //bookAppoinmentButton button
-    bool show = true;
-    print(show);
-    Future<int> getCount() async {
-      int count = await FirebaseFirestore.instance
-          .collection('appointment')
-          .get()
-          .then((value) => value.size);
-      print(count);
-      if (count == 0) {
-        print('this');
-        show = false;
-        print(show);
-      }
-      return count;
-    }
+    // bool show = true;
+    // print(show);
+    // Future<int> getCount() async {
+    //   int count = await FirebaseFirestore.instance
+    //       .collection('appointment')
+    //       .get()
+    //       .then((value) => value.size);
+    //   print(count);
+    //   if (count == 0) {
+    //     print('this');
+    //     show = false;
+    //     print(show);
+    //   }
+    //   return count;
+    // }
 
-    //int text = getCount();
-    print(show);
+    // //int text = getCount();
+    // print(show);
     showButton() {
       return Material(
         elevation: 5,
