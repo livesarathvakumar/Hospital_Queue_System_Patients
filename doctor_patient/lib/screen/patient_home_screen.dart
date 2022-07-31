@@ -89,32 +89,27 @@ class _PatientsHomeScreenState extends State<PatientsHomeScreen> {
     //int text = getCount();
     print(show);
     showButton() {
-      if (show) {
-        return SizedBox();
-      } else {
-        return Material(
-          elevation: 5,
-          borderRadius: BorderRadius.circular(30),
-          color: Colors.green,
-          child: MaterialButton(
-              padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-              minWidth: MediaQuery.of(context).size.width,
-              onPressed: () {
-                //getData();
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => PatientsDepartmentSelectScreen()));
-              },
-              child: Text(
-                "Book Appoinment",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
-              )),
-        );
-      }
-      //return count;
+      return Material(
+        elevation: 5,
+        borderRadius: BorderRadius.circular(30),
+        color: Colors.green,
+        child: MaterialButton(
+            padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+            minWidth: MediaQuery.of(context).size.width,
+            onPressed: () {
+              //getData();
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => PatientsDepartmentSelectScreen()));
+            },
+            child: Text(
+              "Book Appoinment",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            )),
+      );
     }
 
     final Query<Map<String, dynamic>> appointmentlist = FirebaseFirestore
