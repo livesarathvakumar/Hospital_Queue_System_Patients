@@ -35,6 +35,8 @@ String? doctorName;
 int? timeslotId;
 String? selectedtimes;
 
+var firstPress = true;
+
 var now = DateTime.now();
 String? selectdate = DateFormat('yyyy-MM-dd').format(now);
 
@@ -116,9 +118,13 @@ class _PatientsAppointmentFormScreenState
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
-          onPressed: () {
-            final appointment = AppointmentModel();
-            createAppointment(appointment);
+          onPressed: () async {
+            // This is what you should add in your code
+            if (firstPress) {
+              firstPress = false;
+              final appointment = AppointmentModel();
+              createAppointment(appointment);
+            }
           },
           child: Text(
             "Book Appoinment",
